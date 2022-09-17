@@ -9,6 +9,7 @@ namespace RestaurantManage.Models
 {
     public partial class restaurantdbContext : DbContext
     {
+    public  bool IgnoreFilter { get; set; }
         public restaurantdbContext()
         {
         }
@@ -141,9 +142,9 @@ namespace RestaurantManage.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Restaurantmenu_RMC");
             });
-            modelBuilder.Entity<Customer>().HasQueryFilter(a => a.Archived);
-            modelBuilder.Entity<Restaurant>().HasQueryFilter(a => a.Archived);
-            modelBuilder.Entity<Restaurantmenu>().HasQueryFilter(a => a.Archived);
+            modelBuilder.Entity<Customer>().HasQueryFilter(a => a.Archived || IgnoreFilter);
+            modelBuilder.Entity<Restaurant>().HasQueryFilter(a => a.Archived || IgnoreFilter);
+            modelBuilder.Entity<Restaurantmenu>().HasQueryFilter(a => a.Archived || IgnoreFilter);
 
             OnModelCreatingPartial(modelBuilder);
         }
