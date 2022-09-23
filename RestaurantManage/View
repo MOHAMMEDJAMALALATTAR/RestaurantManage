@@ -1,3 +1,65 @@
+ 
+CREATE TABLE `customer` (
+  `CustomerId` int NOT NULL AUTO_INCREMENT,
+  `FirstName` varchar(255) NOT NULL DEFAULT '',
+  `LastName` varchar(255) NOT NULL DEFAULT '',
+  `CreatedDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `UpdatedDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `Archived` tinyint NOT NULL DEFAULT '0',
+  PRIMARY KEY (`CustomerId`),
+  UNIQUE KEY `Id_UNIQUE` (`CustomerId`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+///////////////////////////////
+
+CREATE TABLE `restaurant` (
+  `Id` int NOT NULL AUTO_INCREMENT,
+  `Name` varchar(255) NOT NULL DEFAULT '',
+  `PhoneNumber` varchar(255) NOT NULL DEFAULT '',
+  `CreatedDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `UpdatedDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `Archived` tinyint NOT NULL DEFAULT '0',
+  PRIMARY KEY (`Id`),
+  UNIQUE KEY `Id_UNIQUE` (`Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/////////////////////////////////////////////////////////////////
+CREATE TABLE `restaurantmenu` (
+  `restaurantmenuId` int NOT NULL AUTO_INCREMENT,
+  `Name` varchar(255) NOT NULL DEFAULT '',
+  `PriceInNis` float NOT NULL DEFAULT '0',
+  `PriceInUsd` float NOT NULL DEFAULT '0',
+  `Quantity` int NOT NULL DEFAULT '0',
+  `CreatedDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `UpdatedDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `Archived` tinyint NOT NULL DEFAULT '0',
+  `restaurantId` int NOT NULL,
+  PRIMARY KEY (`restaurantmenuId`),
+  UNIQUE KEY `Id_UNIQUE` (`restaurantmenuId`),
+  KEY `Rest_restaurantmenu_idx` (`restaurantId`),
+  CONSTRAINT `Rest_restaurantmenu` FOREIGN KEY (`restaurantId`) REFERENCES `restaurant` (`Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+////////////////////////////////////////////////////////////////////////////////
+
+SELECT `restaurantmenucustomer`.`Id`,
+    `restaurantmenucustomer`.`restaurantmenuId`,
+    `restaurantmenucustomer`.`CustomerId`
+FROM `restaurantdb`.`restaurantmenucustomer`;
+CREATE TABLE `restaurantmenucustomer` (
+  `Id` int NOT NULL AUTO_INCREMENT,
+  `restaurantmenuId` int NOT NULL,
+  `CustomerId` int NOT NULL,
+  PRIMARY KEY (`Id`),
+  UNIQUE KEY `Id_UNIQUE` (`Id`),
+  KEY `restaurantmenucustomerId_idx` (`restaurantmenuId`),
+  KEY `customer_RMC_idx` (`CustomerId`),
+  CONSTRAINT `customer_RMC` FOREIGN KEY (`CustomerId`) REFERENCES `customer` (`CustomerId`),
+  CONSTRAINT `Restaurantmenu_RMC` FOREIGN KEY (`restaurantmenuId`) REFERENCES `restaurantmenu` (`restaurantmenuId`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+///////////////////////////////////////////////////////////////////////////////
+View 
+
 CREATE 
     ALGORITHM = UNDEFINED 
     DEFINER = `root`@`localhost` 
@@ -16,3 +78,5 @@ VIEW `restaurantdb`.`reportcsv` AS
         JOIN `restaurantdb`.`restaurant` ON ((`restaurantdb`.`restaurant`.`Id` = `restaurantdb`.`restaurantmenu`.`restaurantmenuId`)))
         JOIN `restaurantdb`.`restaurantmenucustomer` ON ((`restaurantdb`.`restaurantmenucustomer`.`CustomerId` = `restaurantdb`.`customer`.`CustomerId`)))
     GROUP BY `restaurantdb`.`restaurantmenu`.`Name` , `restaurantdb`.`customer`.`FirstName`
+    
+    
