@@ -1,0 +1,18 @@
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `restaurantdb`.`reportcsv` AS
+    SELECT 
+        `restaurantdb`.`restaurant`.`Name` AS `RestaurantName`,
+        COUNT(`restaurantdb`.`restaurantmenucustomer`.`Id`) AS `NumberOfOrderedCustomer`,
+        SUM(`restaurantdb`.`restaurantmenu`.`PriceInNis`) AS `ProfitInNis`,
+        SUM(`restaurantdb`.`restaurantmenu`.`PriceInUsd`) AS `ProfitInUsd`,
+        MAX(`restaurantdb`.`restaurantmenu`.`Name`) AS `TheBestSellingMeal`,
+        MAX(`restaurantdb`.`customer`.`FirstName`) AS `MostPurchasedCustomer`
+    FROM
+        (((`restaurantdb`.`customer`
+        JOIN `restaurantdb`.`restaurantmenu` ON ((`restaurantdb`.`customer`.`CustomerId` = `restaurantdb`.`restaurantmenu`.`restaurantmenuId`)))
+        JOIN `restaurantdb`.`restaurant` ON ((`restaurantdb`.`restaurant`.`Id` = `restaurantdb`.`restaurantmenu`.`restaurantmenuId`)))
+        JOIN `restaurantdb`.`restaurantmenucustomer` ON ((`restaurantdb`.`restaurantmenucustomer`.`CustomerId` = `restaurantdb`.`customer`.`CustomerId`)))
+    GROUP BY `restaurantdb`.`restaurantmenu`.`Name` , `restaurantdb`.`customer`.`FirstName`
